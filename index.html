@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REAL DROPSHIPPING HU</title>
+<style>
+    body {
+        margin:0;
+        font-family: Arial, sans-serif;
+        background: #0a1428;
+        color: #fff;
+        text-align: center;
+        padding: 50px;
+    }
+    header {
+        font-size: 50px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    p {
+        font-size: 20px;
+    }
+    .tracker {
+        font-size: 48px;
+        color: #facc15;
+        font-weight: bold;
+        margin-top: 30px;
+    }
+    .links a {
+        display: inline-block;
+        margin: 15px;
+        padding: 15px 25px;
+        background: #facc15;
+        color: #0a1428;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+    .links a:hover {
+        background: #fff;
+        color: #0a1428;
+    }
+</style>
+</head>
+<body>
+
+<header>REAL DROPSHIPPING HU</header>
+<p>30 napos dropshipping kihívás – Hamarosan</p>
+
+<div class="tracker" id="dayTracker">Day 1 – Hamarosan</div>
+
+<div class="links">
+    <a href="https://tiktok.com/@real_dropship1" target="_blank">TikTok</a>
+    <a href="https://youtube.com/@real_dropshiping?si=0PrMWk9SGOhIrlk0" target="_blank">YouTube</a>
+</div>
+
+<script>
+    // Kezdő nap: az első kihívás napja (év, hónap-1, nap)
+    const startDate = new Date(2026, 0, 24); // 2026 Január 24 = Day 1
+    const today = new Date();
+
+    // Napok különbsége
+    const diffTime = today - startDate;
+    let dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    if(dayNumber < 1) dayNumber = 1;
+    if(dayNumber > 30) dayNumber = 30;
+
+    document.getElementById("dayTracker").innerText = "Day " + dayNumber + " – Hamarosan";
+</script>
+
+</body>
+</html>
