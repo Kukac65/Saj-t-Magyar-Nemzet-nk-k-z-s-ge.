@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saját Magyar Nemzetünk Közössége</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #0d0d1a;
+            --secondary: #1a1a2e;
+            --accent: #5865F2;
+            --accent-light: #7983f5;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --led-green: #00ff00;
+            --led-blue: #0066ff;
+            --led-red: #ff0000;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 20%, rgba(28, 28, 50, 0.8) 0%, rgba(10, 10, 20, 0.9) 90%);
+        }
+        
+        /* LED hatások */
+        .led-strip {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                var(--led-red), 
+                var(--led-blue), 
+                var(--led-green),
+                var(--led-blue),
+                var(--led-red));
+            z-index: 1000;
+            animation: ledAnimation 3s infinite linear;
+        }
+        
+        .led-strip-bottom {
+            bottom: 0;
+            top: auto;
+        }
+        
+        .led-border {
+            position: relative;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            background: linear-gradient(var(--primary), var(--primary)) padding-box,
+                        linear-gradient(90deg, var(--led-red), var(--led-blue), var(--led-green), var(--led-blue), var(--led-red)) border-box;
+            background-size: 300% 300%;
+            animation: borderAnimation 4s infinite alternate;
+        }
+        
+        .led-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes ledAnimation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        @keyframes borderAnimation {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px var(--led-blue); }
+            50% { box-shadow: 0 0 20px var(--led-blue), 0 0 30px var(--led-blue); }
+            100% { box-shadow: 0 0 5px var(--led-blue); }
+        }
+        
+        /* Fő tartalom */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--led-red), var(--led-blue), var(--led-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(88, 101, 242, 0.3);
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Tulajdonosok szekciója */
+        .owners-section {
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 20px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--led-red), var(--led-blue), var(--led-green));
+            border-radius: 3px;
+        }
+        
+        .owners-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .owner-card {
+            background-color: var(--secondary);
+            border-radius: 15px;
+            padding: 25px;
+            width: 300px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .owner-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .owner-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--led-red), var(--led-blue), var(--led-green));
+        }
+        
+        .owner-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .owner-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--accent-light);
+        }
+        
+        .owner-role {
+            color: var(--led-green);
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .owner-description {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Discord info */
+        .discord-info {
+            background-color: rgba(26, 26, 46, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px 0;
+            text-align: center;
+        }
+        
+        .discord-logo {
+            font-size: 4rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .discord-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--accent-light);
+        }
+        
+        .discord-link {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .discord-link:hover {
+            background-color: var(--accent-light);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.5);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+        }
+        
+        .server-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--led-green);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Reszponzív design */
+        @media (max-width: 768px) {
+            .owners-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .owner-card {
+                width: 90%;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .discord-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LED csík a tetején -->
+    <div class="led-strip"></div>
+    
+    <!-- LED csík az alján -->
+    <div class="led-strip led-strip-bottom"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="logo led-pulse">
+                <i class="fab fa-discord"></i> Saját Magyar Nemzetünk Közössége
+            </h1>
+            <p class="subtitle">A legjobb magyar Discord közösség, ahol Beni, Áron és Bence tulajdonosként vezetik a szervert. Csatlakozz hozzánk és légy részese egy vibráló, barátságos közösségnek!</p>
+        </header>
+        
+        <section class="owners-section">
+            <h2 class="section-title">A Szerver Tulajdonosai</h2>
+            
+            <div class="owners-container">
+                <!-- Beni kártya -->
+                <div class="owner-card led-border">
+                    <div class="owner-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="owner-name">Beni</h3>
+                    <div class="owner-role">Főadminisztrátor</div>
+                    <p class="owner-description">Beni a szerver alapítója és fő adminisztrátora. Felelős a szerver napi működéséért és a közösség egészséges légkörének megőrzéséért. Szenvedélyesen szereti a magyar kultúrát és a közösségépítést.</p>
+                </div>
+                
+                <!-- Áron kártya -->
+                <div class="owner-card led-border">
+                    <div class="owner-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="owner-name">Áron</h3>
+                    <div class="owner-role">Moderációs Vezető</div>
+                    <p class="owner-description">Áron a moderációs csapat vezetője. Biztosítja, hogy a szerver szabályait mindenki betartsa, és segít fenntartani a barátságos légkört. Szervezési tehetsége nélkülözhetetlen a szerver eseményeihez.</p>
+                </div>
+                
+                <!-- Bence kártya -->
+                <div class="owner-card led-border">
+                    <div class="owner-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="owner-name">Bence</h3>
+                    <div class="owner-role">Technikai Rendszergazda</div>
+                    <p class="owner-description">Bence a szerver technikai hátteréért felel. Botok beállítása, csatornák optimalizálása és a felhasználói élmény folyamatos javítása a feladata. Technikai zsenialitása nélkülözhetetlen a sima működéshez.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="discord-info led-border">
+            <div class="discord-logo">
+                <i class="fab fa-discord"></i>
+            </div>
+            <h2 class="discord-title">Csatlakozz a Közösségünkhöz!</h2>
+            <p>A szerverünk egy barátságos közösség számára készült, ahol megvitathatod a magyar kultúrát, játékozhatsz másokkal, vagy egyszerűen csak beszélgethetsz. Van szerverünkön:</p>
+            <ul style="list-style: none; margin: 20px 0; line-height: 1.8;">
+                <li><i class="fas fa-check" style="color: var(--led-green); margin-right: 10px;"></i> Aktív hang- és szöveges csatornák</li>
+                <li><i class="fas fa-check" style="color: var(--led-green); margin-right: 10px;"></i> Heti játékestek és események</li>
+                <li><i class="fas fa-check" style="color: var(--led-green); margin-right: 10px;"></i> Hasznos magyar tartalmak megosztása</li>
+                <li><i class="fas fa-check" style="color: var(--led-green); margin-right: 10px;"></i> Barátságos közösség és moderáció</li>
+            </ul>
+            <a href="https://discord.gg/example" class="discord-link" target="_blank">
+                <i class="fab fa-discord"></i> Csatlakozz most!
+            </a>
+        </section>
+        
+        <div class="server-stats">
+            <div class="stat-item">
+                <div class="stat-value">500+</div>
+                <div class="stat-label">Tag</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">Aktivitás</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">50+</div>
+                <div class="stat-label">Csatorna</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Tulajdonos</div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Saját Magyar Nemzetünk Közössége Discord Szerver. Minden jog fenntartva.</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">Készült szeretettel a közösség számára | LED design</p>
+    </footer>
+    
+    <script>
+        // Dinamikus LED effektek
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pulszáló LED effekt a kártyákon
+            const cards = document.querySelectorAll('.owner-card');
+            
+            cards.forEach((card, index) => {
+                // Késleltetett animáció minden kártyának
+                card.style.animationDelay = `${index * 0.2}s`;
+                
+                // Egérrel való interakció hatása
+                card.addEventListener('mouseenter', function() {
+                    const colors = ['#ff0000', '#0066ff', '#00ff00'];
+                    this.style.borderImageSource = `linear-gradient(90deg, ${colors[index]}, #ffffff, ${colors[index]})`;
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.borderImageSource = 'linear-gradient(90deg, var(--led-red), var(--led-blue), var(--led-green), var(--led-blue), var(--led-red))';
+                });
+            });
+            
+            // LED csík animációjának gyorsítása egér mozgásra
+            document.addEventListener('mousemove', function(e) {
+                const ledStrip = document.querySelector('.led-strip');
+                const speed = e.clientX / window.innerWidth * 10;
+                ledStrip.style.animationDuration = `${3 - speed / 10}s`;
+            });
+            
+            // Statisztikák animációja
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                const target = parseInt(stat.textContent);
+                let current = 0;
+                const increment = target / 50;
+                const updateStat = () => {
+                    if (current < target) {
+                        current += increment;
+                        if (current > target) current = target;
+                        stat.textContent = Math.floor(current) + (stat.textContent.includes('+') ? '+' : '');
+                        setTimeout(updateStat, 30);
+                    }
+                };
+                setTimeout(updateStat, 500);
+            });
+            
+            // Random LED effekt a háttérben
+            function createLED() {
+                const led = document.createElement('div');
+                led.style.position = 'fixed';
+                led.style.width = '5px';
+                led.style.height = '5px';
+                led.style.borderRadius = '50%';
+                led.style.backgroundColor = getRandomColor();
+                led.style.boxShadow = `0 0 10px ${getRandomColor()}`;
+                led.style.left = Math.random() * 100 + 'vw';
+                led.style.top = Math.random() * 100 + 'vh';
+                led.style.zIndex = '-1';
+                document.body.appendChild(led);
+                
+                // LED eltűnése animációval
+                setTimeout(() => {
+                    led.style.opacity = '0';
+                    led.style.transition = 'opacity 1s';
+                    setTimeout(() => {
+                        document.body.removeChild(led);
+                    }, 1000);
+                }, 2000);
+            }
+            
+            function getRandomColor() {
+                const colors = ['#ff0000', '#0066ff', '#00ff00', '#ffff00', '#ff00ff'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            // LED-ek generálása időközönként
+            setInterval(createLED, 300);
+            
+            // Induláskor néhány LED
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => createLED(), i * 100);
+            }
+        });
+    </script>
+</body>
+</html>
