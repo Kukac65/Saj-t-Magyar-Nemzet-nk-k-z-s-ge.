@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas AI Asszisztens</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #a9a9b8;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .features-panel {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .features-panel h2 {
+            color: #4cc9f0;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .feature-category {
+            margin-bottom: 25px;
+        }
+
+        .feature-category h3 {
+            color: #4361ee;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #4cc9f0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-list li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .chat-interface {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chat-header h2 {
+            color: #4cc9f0;
+            font-size: 1.8rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .atlas-message {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .user-message .message-sender {
+            color: #a5b4fc;
+        }
+
+        .atlas-message .message-sender {
+            color: #4cc9f0;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        textarea {
+            flex-grow: 1;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            resize: none;
+            height: 60px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4361ee;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .send-btn {
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .voice-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .voice-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: #4361ee;
+        }
+
+        .feature-card h3 {
+            color: #4cc9f0;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .feature-card p {
+            color: #a9a9b8;
+            line-height: 1.6;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #a9a9b8;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .lang-btn {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #a9a9b8;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: #4361ee;
+            color: white;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Atlas AI Asszisztens</h1>
+            <p class="tagline">A jövő intelligense - Bölcsesség, kreativitás és innováció egy helyen</p>
+            
+            <div class="language-selector">
+                <button class="lang-btn active" onclick="setLanguage('hu')">Magyar</button>
+                <button class="lang-btn" onclick="setLanguage('en')">English</button>
+                <button class="lang-btn" onclick="setLanguage('de')">Deutsch</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="features-panel">
+                <h2>Képességek</h2>
+                
+                <div class="feature-category">
+                    <h3>Alapvető tulajdonságok</h3>
+                    <ul class="feature-list">
+                        <li>Többnyelvű kommunikáció</li>
+                        <li>Kódgenerálás és elemzés</li>
+                        <li>Tudományos magyarázatok</li>
+                        <li>Etikai irányelvek betartása</li>
+                        <li>Kreatív írás és elemzés</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-category">
+                    <h3>Extra funkciók</h3>
+                    <ul class="feature-list">
+                        <li>Hangszintézis és felismerés</li>
+                        <li>Képértelmezés és leírás</li>
+                        <li>Dokumentumelemzés (PDF, Word)</li>
+                        <li>Adatvizualizáció</li>
+                        <li>Valós idejű fordítás</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-category">
+                    <h3>Speciális modulok</h3>
+                    <ul class="feature-list">
+                        <li>Tanulási segédlet</li>
+                        <li>Kutatási támogatás</li>
+                        <li>Üzleti elemzés</li>
+                        <li>Művészeti alkotás</li>
+                        <li>Technikai hibaelhárítás</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="chat-interface">
+                <div class="chat-header">
+                    <h2>Beszélgetés Atlasszal</h2>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message atlas-message">
+                        <div class="message-sender">Atlas</div>
+                        <div class="message-text">Üdvözöllek! Én vagyok Atlas, az AI asszisztensed. Hogyan segíthetek ma? Kérdezz bátran bármiről - akár programozás, akár tudomány, akár kreatív írás a téma!</div>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <textarea id="userInput" placeholder="Írd ide az üzeneted... (Shift+Enter a sortörés, Enter a küldés)"></textarea>
+                    
+                    <div class="controls">
+                        <button class="send-btn" onclick="sendMessage()">
+                            <span>Küldés</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                            </svg>
+                        </button>
+                        <button class="voice-btn" onclick="toggleVoiceInput()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/>
+                                <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z"/>
+                            </svg>
+                            <span id="voiceBtnText">Hangbevitel</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <h3>Hangszintézis</h3>
+                <p>Atlas természetes hangon kommunikál veleted. Választhatsz különböző hangokat és akcentusokat a beszédstílushoz.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <h3>Képfeldolgozás</h3>
+                <p>Tölts fel képeket, és Atlas részletesen leírja a tartalmukat, felismeri szövegeket, és elemzi a vizuális tartalmat.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Adatelemzés</h3>
+                <p>Atlas segít adatokat elemezni, grafikonokat készíteni, és betekintést nyújt komplex információkba.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Többnyelvűség</h3>
+                <p>Beszélj magyarul, angolul, németül vagy számos más nyelven. Atlas valós időben fordít és kommunikál.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>Kreatív partner</h3>
+                <p>Írói segítség, versírás, forgatókönyv-tervezés, marketing ötletek - Atlas kreatív partnere lesz.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Technikai segítség</h3>
+                <p>Kódgenerálás, hibaelhárítás, algoritmus tervezés, és technikai koncepciók magyarázata.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Atlas AI Asszisztens © 2023 | Minden jog fenntartva</p>
+            <p>Ez egy demonstrációs felület. A valós AI implementáció további backend fejlesztést igényel.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Nyelvi beállítások
+        function setLanguage(lang) {
+            // Aktív gomb beállítása
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Nyelv váltás üzenetek
+            const messages = {
+                'hu': {
+                    welcome: 'Üdvözöllek! Én vagyok Atlas, az AI asszisztensed. Hogyan segíthetek ma?',
+                    placeholder: 'Írd ide az üzeneted...',
+                    voiceBtn: 'Hangbevitel',
+                    send: 'Küldés'
+                },
+                'en': {
+                    welcome: 'Hello! I am Atlas, your AI assistant. How can I help you today?',
+                    placeholder: 'Type your message here...',
+                    voiceBtn: 'Voice Input',
+                    send: 'Send'
+                },
+                'de': {
+                    welcome: 'Hallo! Ich bin Atlas, dein KI-Assistent. Wie kann ich dir heute helfen?',
+                    placeholder: 'Schreibe hier deine Nachricht...',
+                    voiceBtn: 'Spracheingabe',
+                    send: 'Senden'
+                }
+            };
+            
+            // Frissítés
+            const chatMessages = document.getElementById('chatMessages');
+            const firstMessage = chatMessages.querySelector('.atlas-message .message-text');
+            if (firstMessage) {
+                firstMessage.textContent = messages[lang].welcome;
+            }
+            
+            document.getElementById('userInput').placeholder = messages[lang].placeholder;
+            document.getElementById('voiceBtnText').textContent = messages[lang].voiceBtn;
+            document.querySelector('.send-btn span').textContent = messages[lang].send;
+            
+            // Aktuális nyelv tárolása
+            currentLanguage = lang;
+        }
+        
+        // Üzenetküldés
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message === '') return;
+            
+            // Felhasználói üzenet hozzáadása
+            addMessage(message, 'user');
+            
+            // Input mező ürítése
+            userInput.value = '';
+            
+            // Atlas válaszának generálása (szimulált)
+            setTimeout(() => {
+                generateAtlasResponse(message);
+            }, 1000);
+        }
+        
+        // Üzenet hozzáadása a chathez
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'message-sender';
+            senderDiv.textContent = sender === 'user' ? 'Te' : 'Atlas';
+            
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = text;
+            
+            messageDiv.appendChild(senderDiv);
+            messageDiv.appendChild(textDiv);
+            
+            chatMessages.appendChild(messageDiv);
+            
+            // Görgetés aljára
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Atlas válasz generálása
+        function generateAtlasResponse(userMessage) {
+            const responses = {
+                'hu': [
+                    "Érdekes kérdés! Atlaszként szeretnék részletesen válaszolni. Az AI asszisztensként számos területen segíthetek: programozás, tudomány, kreatív írás, vagy akár napi problémák megoldása.",
+                    "Köszönöm a kérdést! Mint Atlas, a többfunkciós AI, képességeim közé tartozik a kódgenerálás, nyelvi fordítás, adatelemzés és kreatív tartalomkészítés. Miben segíthetek konkrétan?",
+                    "Jó, hogy kérdezed! A mai Atlas AI képes komplex problémákat elemezni, több forrást összesúlyozni, és személyre szabott javaslatokat adni. Szeretnél konkrét példát?",
+                    "Figyelemre méltó kérdés! Mint fejlett AI asszisztens, célom a lehető legpontosabb és leghasznosabb információk szolgáltatása. Kérdezz bátran bármiről!"
+                ],
+                'en': [
+                    "Interesting question! As Atlas, I'd like to provide a detailed answer. As an AI assistant, I can help in many areas: programming, science, creative writing, or even solving daily problems.",
+                    "Thank you for your question! As Atlas, the multifunctional AI, my capabilities include code generation, language translation, data analysis, and creative content creation. How can I help you specifically?",
+                    "Good question! Today's Atlas AI can analyze complex problems, balance multiple sources, and provide personalized suggestions. Would you like a specific example?",
+                    "Notable question! As an advanced AI assistant, my goal is to provide the most accurate and useful information possible. Feel free to ask about anything!"
+                ],
+                'de': [
+                    "Interessante Frage! Als Atlas möchte ich eine detaillierte Antwort geben. Als KI-Assistent kann ich in vielen Bereichen helfen: Programmierung, Wissenschaft, kreatives Schreiben oder sogar bei der Lösung alltäglicher Probl
